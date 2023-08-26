@@ -1,0 +1,159 @@
+body {
+  font-family: sans-serif;
+}
+
+.head {
+  height: 130mm;
+  width: auto;
+  text-align: center;
+}
+.headline {
+  font-size: 20mm;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: rgb(0, 47, 108);
+}
+.paragraph {
+  font-size: 5mm;
+}
+.image {
+  margin-top: 15mm;
+  height: 85mm;
+  text-align: center;
+}
+.space {
+  height: 15mm;
+}
+.space_big {
+  height: 80mm;
+}
+.space_small {
+  height: 3mm;
+}
+.edge {
+  display: flex;
+  margin: auto;
+  height: 0.3mm;
+  width: 300mm;
+  background-color: rgb(167, 167, 167);
+}
+.edge_2 {
+  display: flex;
+  margin: auto;
+  height: 0.3mm;
+  width: 200mm;
+  background-color: rgb(167, 167, 167);
+}
+.select {
+  height: 200mm;
+  text-align: center;
+}
+.entrance {
+  margin-top: 8mm;
+  height: 15mm;
+  width: 100mm;
+  font-size: 5mm;
+  border-radius: 5mm;
+  border-color: rgb(0, 47, 108);
+  background-color: white;
+  color: rgb(0, 47, 108);
+}
+button:hover {
+  background-color: rgb(0, 47, 108);
+  color: white;
+}
+.head_2 {
+  font-size: 15mm;
+  text-align: center;
+  color: rgb(0, 47, 108);
+}
+.main {
+  margin-top: -5mm;
+  text-align: center;
+}
+.choose {
+  margin-top: 5mm;
+  height: 10mm;
+  width: 60mm;
+  font-size: 5mm;
+  border-radius: 5mm;
+  background-color: white;
+  color: rgb(0, 47, 108);
+  border-color: rgb(0, 47, 108);
+}
+.choose:focus {
+  background-color: rgb(0, 47, 108);
+  color: white;
+}
+
+.end {
+  text-align: center;
+}
+.choose_end {
+  margin-top: 5mm;
+  height: 10mm;
+  width: 100mm;
+  font-size: 5mm;
+  border-radius: 5mm;
+  background-color: white;
+  color: rgb(0, 47, 108);
+  border-color: rgb(0, 47, 108);
+}
+.information {
+  margin-top: 25mm;
+  text-align: center;
+}
+.headline_2 {
+  font-weight: bold;
+}
+.paragraph_limited {
+  display: block;
+  margin: auto;
+  font-size: 5mm;
+  width: 180mm;
+  text-align: left;
+}
+.force_layout {
+  margin-top: -40mm;
+}
+.text_in {
+  color: royalblue;
+}
+.head_title {
+  height: 70mm;
+  width: 280mm;
+  font-size: 10mm;
+  font-weight: bold;
+  display: block;
+  margin: auto;
+}
+.titles {
+  margin-top: 25mm;
+  margin-left: 70mm;
+}
+.titles_1 {
+  margin-top: 50mm;
+  margin-left: 135mm;
+}
+.titles_little {
+  font-size: 10mm;
+  font-weight: bold;
+}
+.question {
+  display: block;
+  margin: auto;
+  text-align: center;
+  font-weight: bold;
+}
+.little_head {
+  margin-bottom: -30mm;
+}
+.p_bold {
+  font-weight: bold;
+  font-size: 8mm;
+}
+.s_area {
+  text-align: center;
+}
+.visualizationSelect {
+  font-size: 5mm;
+}

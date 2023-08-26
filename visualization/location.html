@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Researcher's mobility in Finland</title>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <link rel="stylesheet" type="text/css" href="../src/styles.css" />
+    <script src="http://d3js.org/d3.v6.min.js" charset="utf-8"></script>
+  </head>
+
+  <body>
+    <div class="head_2">
+      <p>Researcher's mobility in location</p>
+    </div>
+    <div class="head_title">
+      <div class="titles_1">
+        <p>1.Overall data visualization.</p>
+        <p>2.Two different periods of time.</p>
+        <p>3.Ranking of specific cities.</p>
+      </div>
+    </div>
+    <div class="chord">
+      <style>
+        .chord {
+          font: 12px sans-serif;
+          margin-right: 150mm;
+          margin-top: -110mm;
+        }
+
+        .group-tick line {
+          stroke: #000;
+        }
+
+        .ribbons {
+          fill-opacity: 0.67;
+        }
+      </style>
+      <svg
+        width="600"
+        height="600"
+        class="svg0"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+      <script>
+        //添加matix
+        var matrix = [
+          [
+            235355,
+            8070,
+            17103,
+            30249,
+            11788,
+            1403,
+            718,
+            3738,
+            4206,
+            1179,
+            239,
+            185,
+            0,
+            129,
+            7,
+            104,
+            109,
+            48,
+            3,
+            5,
+            10,
+            0
+          ],
+          [
+            5861,
+            196352,
+            16306,
+            36984,
+            5535,
+            2688,
+            543,
+            2791,
+            2851,
+            1737,
+            136,
+            478,
+            1,
+            312,
+            19,
+            218,
+            98,
+            175,
+            11,
+            26,
+            11,
+            6
+          ],
+          [
+            18987,
+            2863,
+            242291,
+            37806,
+            6202,
+            628,
+            362,
+            2166,
+            7760,
+            1667,
+            143,
+            1216,
+            3,
+            181,
+            71,
+            1025,
+            107,
+            49,
+            30,
+            132,
+            1,
+            0
+          ],
+          [
+            32693,
+            33174,
+            35860,
+            1853770,
+            36696,
+            4787,
+            6165,
+            152512,
+            27581,
+            19962,
+            1832,
+            790594,
+            35,
+            579,
+            98,
+            168,
+            172,
+            238,
+            219,
+            43,
+            23,
+            0
+          ],
+          [
+            12995,
+            7701,
+            5998,
+            32267,
+            182824,
+            2036,
+            149,
+            5044,
+            2023,
+            1069,
+            155,
+            200,
+            0,
+            65,
+            19,
+            107,
+            399,
+            60,
+            73,
+            2,
+            8,
+            0
+          ],
+          [
+            1069,
+            1465,
+            2448,
+            3777,
+            1927,
+            10115,
+            10,
+            1387,
+            1388,
+            289,
+            294,
+            90,
+            0,
+            23,
+            48,
+            32,
+            57,
+            29,
+            18,
+            0,
+            0,
+            0
+          ],
+          [
+            725,
+            657,
+            461,
+            3819,
+            533,
+            41,
+            9363,
+            124,
+            1335,
+            49,
+            0,
+            102,
+            0,
+            3,
+            0,
+            49,
+            16,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            2638,
+            4245,
+            1834,
+            152966,
+            2652,
+            684,
+            39,
+            75297,
+            1361,
+            881,
+            138,
+            587,
+            5,
+            39,
+            0,
+            68,
+            69,
+            31,
+            13,
+            7,
+            22,
+            0
+          ],
+          [
+            3112,
+            3965,
+            8239,
+            35266,
+            3072,
+            1016,
+            201,
+            1296,
+            66814,
+            5027,
+            419,
+            369,
+            16,
+            117,
+            51,
+            153,
+            124,
+            100,
+            63,
+            8,
+            12,
+            0
+          ],
+          [
+            954,
+            2243,
+            2319,
+            9739,
+            899,
+            327,
+            64,
+            730,
+            13532,
+            31029,
+            228,
+            287,
+            0,
+            8,
+            30,
+            64,
+            21,
+            4,
+            7,
+            14,
+            24,
+            0
+          ],
+          [
+            210,
+            157,
+            142,
+            1825,
+            102,
+            243,
+            12,
+            82,
+            519,
+            199,
+            1750,
+            18,
+            0,
+            7,
+            3,
+            7,
+            15,
+            7,
+            1,
+            0,
+            1,
+            10
+          ],
+          [
+            584,
+            1413,
+            683,
+            784003,
+            308,
+            89,
+            40,
+            419,
+            443,
+            311,
+            61,
+            101749,
+            6,
+            34,
+            8,
+            62,
+            61,
+            24,
+            19,
+            0,
+            0,
+            0
+          ],
+          [0, 1, 3, 46, 0, 0, 0, 7, 2, 0, 0, 5, 52, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          [
+            149,
+            347,
+            154,
+            492,
+            69,
+            36,
+            43,
+            106,
+            112,
+            38,
+            4,
+            21,
+            0,
+            927,
+            0,
+            1,
+            11,
+            22,
+            11,
+            0,
+            0,
+            0
+          ],
+          [
+            5,
+            14,
+            88,
+            113,
+            10,
+            25,
+            0,
+            17,
+            65,
+            14,
+            3,
+            9,
+            0,
+            0,
+            131,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            102,
+            336,
+            602,
+            483,
+            91,
+            4,
+            34,
+            32,
+            188,
+            25,
+            0,
+            22,
+            0,
+            18,
+            7,
+            1101,
+            2,
+            33,
+            32,
+            12,
+            0,
+            0
+          ],
+          [
+            106,
+            10,
+            85,
+            187,
+            195,
+            258,
+            1,
+            76,
+            120,
+            22,
+            55,
+            78,
+            0,
+            23,
+            33,
+            3,
+            994,
+            0,
+            10,
+            0,
+            0,
+            0
+          ],
+          [
+            18,
+            188,
+            73,
+            232,
+            161,
+            2,
+            0,
+            2,
+            130,
+            8,
+            0,
+            23,
+            0,
+            36,
+            0,
+            0,
+            0,
+            485,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            7,
+            41,
+            51,
+            158,
+            35,
+            1,
+            0,
+            29,
+            21,
+            21,
+            14,
+            15,
+            0,
+            43,
+            0,
+            16,
+            15,
+            0,
+            259,
+            0,
+            0,
+            0
+          ],
+          [
+            8,
+            24,
+            74,
+            65,
+            1,
+            0,
+            0,
+            2,
+            14,
+            13,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            125,
+            0,
+            0
+          ],
+          [
+            12,
+            24,
+            25,
+            16,
+            23,
+            0,
+            0,
+            0,
+            2,
+            18,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            51,
+            0
+          ],
+          [0, 3, 0, 10, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11]
+        ];
+
+        var svg = d3.select(".svg0"),
+          width = +svg.attr("width"),
+          height = +svg.attr("height"),
+          outerRadius = Math.min(width, height) * 0.5 - 100,
+          innerRadius = outerRadius - 30; // 设置布局的长宽，半径
+
+        var formatValue = d3.formatPrefix(",.0", 1e3);
+
+        var chord = d3.chord().padAngle(0.05).sortSubgroups(d3.descending);
+
+        var arc = d3
+          .arc() // 新建一个弧度生成器，用来画弧
+          .innerRadius(innerRadius) // 设置内半径访问器
+          .outerRadius(outerRadius); // 设置外半径访问器
+
+        var ribbon = d3.ribbon().radius(innerRadius);
+
+        var color = d3
+          .scaleOrdinal()
+          .domain(d3.range(4))
+          .range(["#000066", "#6699FF", "#9900FF", "#3399CC"]);
+
+        var g = svg
+          .append("g")
+          .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")")
+          .datum(chord(matrix));
+
+        var group = g
+          .append("g") // Add a group per neighborhood.
+          .attr("class", "groups")
+          .selectAll("g")
+          .data(function (chords) {
+            return chords.groups;
+          })
+          .enter()
+          .append("g");
+
+        group
+          .append("path")
+          .style("fill", function (d) {
+            return color(d.index);
+          })
+          .style("stroke", function (d) {
+            return d3.rgb(color(d.index)).darker();
+          })
+          .attr("d", arc);
+
+        var groupTick = group
+          .selectAll(".group-tick")
+          .data(function (d) {
+            return groupTicks(d, 1e3);
+          })
+          .enter()
+          .append("g")
+          .attr("class", "group-tick")
+          .attr("transform", function (d) {
+            return (
+              "rotate(" +
+              ((d.angle * 180) / Math.PI - 90) +
+              ") translate(" +
+              outerRadius +
+              ",0)"
+            );
+          });
+
+        groupTick.append("line").attr("x2", 6);
+
+        g.append("g") //  添加文本标识
+          .attr("class", "group-labels")
+          .selectAll("text")
+          .data(function (chords) {
+            return chords.groups;
+          })
+          .enter()
+          .append("text")
+          .attr("x", 6)
+          .attr("dy", 15)
+          .attr("transform", function (d) {
+            return (
+              "rotate(" +
+              ((((d.startAngle + d.endAngle) / 2) * 180) / Math.PI - 90) +
+              ") translate(" +
+              (outerRadius + 10) +
+              ",0)"
+            );
+          })
+          .style("text-anchor", "start")
+          .text(function (d, i) {
+            switch (i) {
+              case 0:
+                return "Oulu";
+              case 1:
+                return "Tampere";
+              case 2:
+                return "Turku";
+              case 3:
+                return "Helsinki";
+              case 4:
+                return "Kuopio";
+              case 5:
+                return "Joensuu";
+              case 6:
+                return "Vaasa";
+              case 7:
+                return "Jyvaskyla";
+              case 8:
+                return "Other";
+              case 9:
+                return "Espoo";
+              case 10:
+                return "Vantaa";
+              case 11:
+                return "Lappeenranta";
+              case 12:
+                return "Jarvenpaa";
+              case 13:
+                return "Lahti";
+              case 14:
+                return "Porvoo";
+              case 15:
+                return "Pori";
+              case 16:
+                return "Mikkeli";
+              case 17:
+                return "Hameenlinna";
+              case 18:
+                return "Kotka";
+              case 19:
+                return "Lohja";
+              case 20:
+                return "Rauma";
+              case 21:
+                return "Nurmijarvi";
+              default:
+                return "";
+            }
+          });
+
+        g.append("g")
+          .attr("class", "ribbons")
+          .selectAll("path")
+          .data(function (chords) {
+            return chords;
+          })
+          .enter()
+          .append("path")
+          .attr("d", ribbon)
+          .style("fill", function (d) {
+            return color(d.target.index);
+          })
+          .style("stroke", function (d) {
+            return d3.rgb(color(d.target.index)).darker();
+          });
+
+        function groupTicks(d, step) {
+          var k = (d.endAngle - d.startAngle) / d.value;
+          return d3.range(0, d.value, step).map(function (value) {
+            return { value: value, angle: value * k + d.startAngle };
+          });
+        }
+      </script>
+    </div>
+    <div class="main">
+      <div class="space"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="titles_little">
+        <p>
+          1.Overall data visualization
+        </p>
+      </div>
+      <svg
+        display:block;
+        margin:auto;
+        width="1100"
+        height="600"
+        id="mainsvg"
+        class="svg1"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+      <script>
+        //读取点数
+        let NODENUM = 1;
+        d3.csv("../data/region_name.csv").then((nodes) => {
+          NODENUM = nodes.length;
+          d3.csv("../data/Author_Mobility_Network(08-18).csv").then((links) => {
+            links = links.filter((link) => link.From !== link.To);
+            //添加索引和始末
+            for (let link of links) {
+              link.source = nodes.find((node) => node.id === link.From);
+              link.target = nodes.find((node) => node.id === link.To);
+            }
+            for (let i = 0; i < nodes.length; i++) {
+              nodes[i].ord = i;
+            }
+            const rectwidth = 20;
+            const svg = d3.select(".svg1");
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+            const cx = (d) => 110 + d.ord * rectwidth + 40;
+            const cy = (d) => 100;
+            const cx1 = (d) => 120;
+            const cy1 = (d) => 120 + d.ord * rectwidth;
+            svg
+              .selectAll(".myText1")
+              .data(nodes)
+              .join("text")
+              .attr("class", "text_in")
+              .attr("fill", "grey")
+              .attr("y", cy)
+              .attr("x", cx)
+              .attr("dy", 10)
+              .attr("text-anchor", "end")
+              .attr("writing-mode", "vertical-rl")
+              .text((d) => d.name);
+            svg
+              .selectAll(".myText2")
+              .data(nodes)
+              .join("text")
+              .attr("class", "text_out")
+              .attr("fill", "black")
+              .attr("y", cy1)
+              .attr("x", cx1)
+              .attr("dy", 10)
+              .attr("text-anchor", "end")
+              .attr("writing-mode", "horizontal-tb")
+              .text((d) => d.name);
+            const cx2 = (d) => 100 + d.ord * rectwidth + 40;
+            const cy2 = (d) => 110 + d.ord * rectwidth + 5;
+            const colorScale = d3
+              .scaleThreshold()
+              .domain([101, 501, 1001, 2001, 5001, 10001, 20001, 3300001])
+              .range([
+                "rgb(173, 216, 230)", // 淡蓝色
+                "rgb(135, 206, 250)", // 天蓝色
+                "rgb(0, 191, 255)", // 深天蓝色
+                "rgb(30,144,255)",
+                "rgb(0,0,255)", // 蓝色
+                "rgb(186, 85, 211)", // 深蓝色
+                "rgb(148, 0, 211)", // 靛紫色
+                "rgb(75, 0, 130)" // 紫罗兰色
+              ]);
+            svg
+              .selectAll("rect")
+              .data(links)
+              .join("rect")
+              .attr("x", (d) => cx2(d.source))
+              .attr("y", (d) => cy2(d.target))
+              .attr("width", 18)
+              .attr("height", 18)
+              .attr("fill", (d) => colorScale(parseInt(d.Times)))
+              .on("mouseover", function (event, d) {
+                svg
+                  .append("rect")
+                  .attr("class", "tooltip")
+                  .attr("x", cx2(d.source) - 10)
+                  .attr("y", cy2(d.target) - 20)
+                  .attr("rx", "5")
+                  .attr("ry", "5")
+                  .attr("width", 80)
+                  .attr("height", 30)
+                  .attr("fill", "rgba(111, 127, 148, 0.8)");
+
+                svg
+                  .append("text")
+                  .attr("class", "tooltip")
+                  .attr("x", cx2(d.source))
+                  .attr("y", cy2(d.target))
+                  .text(`${d.Times}`)
+                  .attr("font-size", "15px")
+                  .attr("fill", "white");
+              })
+              .on("mouseout", function () {
+                svg.selectAll(".tooltip").remove();
+              });
+
+            //添加图注
+            svg
+              .selectAll(".myText3")
+              .data(nodes)
+              .join("text")
+              .attr("class", "text")
+              .attr("y", 200)
+              .attr("x", 650)
+              .text("Data on the transform of scientists between cities");
+
+            svg
+              .selectAll(".myText4")
+              .data(nodes)
+              .join("text")
+              .attr("class", "text")
+              .attr("y", 240)
+              .attr("x", 650)
+              .attr("fill", "grey")
+              .text("xlim : source city");
+            svg
+              .selectAll(".myText5")
+              .data(nodes)
+              .join("text")
+              .attr("class", "text")
+              .attr("y", 240)
+              .attr("x", 820)
+              .attr("fill", "black")
+              .text("ylim : target city");
+            const colorValues = [
+              100,
+              500,
+              1000,
+              2000,
+              5000,
+              10000,
+              20000,
+              20001
+            ];
+            const temp = [0, 100, 500, 1000, 2000, 5000, 10000, 20000, "+inf"];
+            svg
+              .selectAll("temp")
+              .data(colorValues)
+              .join("circle")
+              .attr("r", 5)
+              .attr("fill", (d) => colorScale(d))
+              .attr("cx", 700)
+              .attr("cy", (d, i) => 280 + i * 25);
+            svg
+              .selectAll(".myText5")
+              .data(colorValues)
+              .join("text")
+              .attr("class", "text")
+              .attr("x", 750)
+              .attr("y", (d, i) => 285 + i * 25)
+              .text((d, i) => `${temp[i]} - ${temp[i + 1]}`);
+          });
+        });
+      </script>
+      <div class="paragraph">
+        <p>
+          Above is the visualization of data collected from 2008 to 2018,
+          showing the transform of scientists between cities.
+        </p>
+        <p>
+          The data divides Finland into 22 regions, and the number of scientists
+          transformed can be seen from this chart.
+        </p>
+      </div>
+      <div class="main">
+        <div class="space"></div>
+        <div class="edge"></div>
+        <div class="space"></div>
+        <div class="titles_little">
+          <p>
+            2.Two different periods of time
+          </p>
+        </div>
+        <div class="paragraph">
+          <p>
+            After showing the visualization of overall data, we want to see if
+            there is a difference in transform between two periods of time.
+          </p>
+          <p>
+            To find the influence of time periods, we made the two matrix graphs
+            below:
+          </p>
+
+          <p>
+            You can also select a period of time to see the transform of
+            scientists between cities.
+          </p>
+          <p>
+            （默认显示时期为：2009-2013年段）
+          </p>
+        </div>
+      </div>
+      <script>
+        window.onload = function () {
+          document.querySelector("#btn09-13").click();
+        };
+      </script>
+
+      <button class="choose" id="btn09-13">
+        2009 - 2013
+      </button>
+      <button class="choose" id="btn14-18">2014 - 2018</button>
+      <svg
+        display="block"
+        margin="auto"
+        width="1100"
+        height="600"
+        id="svg_2"
+        class="svg2"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+
+      <script>
+        function drawVisualization(dataPath) {
+          //读取点数
+          d3.csv("../data/region_name.csv").then((nodes) => {
+            let NODENUM = nodes.length;
+            d3.csv(dataPath).then((links) => {
+              links = links.filter((link) => link.From !== link.To);
+              //添加索引和始末
+              for (let link of links) {
+                link.source = nodes.find((node) => node.id === link.From);
+                link.target = nodes.find((node) => node.id === link.To);
+              }
+              for (let i = 0; i < nodes.length; i++) {
+                nodes[i].ord = i;
+              }
+
+              const rectwidth = 20;
+              const svg = d3.select(".svg2");
+              const width = svg.attr("width");
+              const height = svg.attr("height");
+              const cx = (d) => 110 + d.ord * rectwidth + 40;
+              const cy = (d) => 120;
+              const cx1 = (d) => 120;
+              const cy1 = (d) => 155 + d.ord * rectwidth;
+              const cx2 = (d) => 100 + d.ord * rectwidth + 40;
+              const cy2 = (d) => 150 + d.ord * rectwidth;
+
+              svg
+                .selectAll(".myText1")
+                .data(nodes)
+                .join("text")
+                .attr("class", "text")
+                .attr("y", cy)
+                .attr("x", cx)
+                .attr("dy", 10)
+                .attr("text-anchor", "end")
+                .attr("fill", "grey")
+                .attr("writing-mode", "vertical-rl")
+                .text((d) => d.name);
+
+              svg
+                .selectAll(".myText2")
+                .data(nodes)
+                .join("text")
+                .attr("class", "text")
+                .attr("y", cy1)
+                .attr("x", cx1)
+                .attr("dy", 10)
+                .attr("text-anchor", "end")
+                .attr("fill", "black")
+                .attr("writing-mode", "horizontal-tb")
+                .text((d) => d.name);
+
+              const colorScale = d3
+                .scaleThreshold()
+                .domain([101, 501, 1001, 2001, 5001, 10001, 20001, 3300001])
+                .range([
+                  "rgb(173, 216, 230)",
+                  "rgb(135, 206, 250)",
+                  "rgb(0, 191, 255)",
+                  "rgb(30,144,255)",
+                  "rgb(0,0,255)", // 蓝色
+                  "rgb(186, 85, 211)",
+                  "rgb(148, 0, 211)",
+                  "rgb(75, 0, 130)"
+                ]);
+
+              svg
+                .selectAll("rect")
+                .data(links)
+                .join("rect")
+                .attr("x", (d) => cx2(d.source))
+                .attr("y", (d) => cy2(d.target))
+                .attr("width", 18)
+                .attr("height", 18)
+                .attr("fill", (d) => colorScale(parseInt(d.Times)))
+                .on("mouseover", function (event, d) {
+                  svg
+                    .append("rect")
+                    .attr("class", "tooltip")
+                    .attr("x", cx2(d.source) - 10)
+                    .attr("y", cy2(d.target) - 20)
+                    .attr("rx", "5")
+                    .attr("ry", "5")
+                    .attr("width", 80)
+                    .attr("height", 30)
+                    .attr("fill", "rgba(111, 127, 148, 0.8)");
+
+                  svg
+                    .append("text")
+                    .attr("class", "tooltip")
+                    .attr("x", cx2(d.source))
+                    .attr("y", cy2(d.target))
+                    .text(`${d.Times}`)
+                    .attr("font-size", "15px")
+                    .attr("fill", "white");
+                })
+                .on("mouseout", function () {
+                  svg.selectAll(".tooltip").remove();
+                });
+
+              svg
+                .selectAll(".myText3")
+                .data(nodes)
+                .join("text")
+                .attr("class", "text")
+                .attr("y", 200)
+                .attr("x", 650)
+                .text("Data on the transform of scientists between cities");
+
+              svg
+                .selectAll(".myText4")
+                .data(nodes)
+                .join("text")
+                .attr("class", "text")
+                .attr("y", 240)
+                .attr("x", 820)
+                .attr("fill", "black")
+                .text("ylim : target city");
+              svg
+                .selectAll(".myText5")
+                .data(nodes)
+                .join("text")
+                .attr("class", "text")
+                .attr("y", 240)
+                .attr("x", 650)
+                .attr("fill", "grey")
+                .text("xlim : source city");
+
+              const colorValues = [
+                100,
+                500,
+                1000,
+                2000,
+                5000,
+                10000,
+                20000,
+                20001
+              ];
+              const temp = [
+                0,
+                100,
+                500,
+                1000,
+                2000,
+                5000,
+                10000,
+                20000,
+                "+inf"
+              ];
+
+              svg
+                .selectAll(".colorCircle")
+                .data(colorValues)
+                .join("circle")
+                .attr("class", "colorCircle")
+                .attr("r", 5)
+                .attr("fill", (d) => colorScale(d))
+                .attr("cx", 700)
+                .attr("cy", (d, i) => 280 + i * 25);
+
+              svg
+                .selectAll(".myText5")
+                .data(colorValues)
+                .join("text")
+                .attr("class", "text")
+                .attr("x", 750)
+                .attr("y", (d, i) => 285 + i * 25)
+                .text((d, i) => `${temp[i]} - ${temp[i + 1]}`);
+            });
+          });
+        }
+        document.getElementById("btn09-13").addEventListener("click", () => {
+          drawVisualization("../data/Author_Mobility_Network(09-13).csv");
+        });
+
+        document.getElementById("btn14-18").addEventListener("click", () => {
+          drawVisualization("../data/Author_Mobility_Network(14-18).csv");
+        });
+      </script>
+    </div>
+    <div class="main">
+      <div class="space"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="titles_little">
+        <p>
+          3.Ranking of specific cities
+        </p>
+      </div>
+      <div class="paragraph">
+        <p>
+          Now that we have a basic view on the mobility in location, we want to
+          see the difference between diffrent cities:
+        </p>
+        <div class="question">
+          <p>
+            Which cities have a larger amount of researchers transformed?
+          </p>
+          <p>
+            And are there any possible reasons to explain the differences in
+            data between citties?
+          </p>
+        </div>
+        <p>
+          Here are two charts that shows the total amount of flow-in and
+          flow-out scientists in different cities:
+        </p>
+      </div>
+      <svg
+        width="1100"
+        height="1000"
+        id="svg_3"
+        class="svg3"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+      <script>
+        d3.csv("../data/Author_Mobility_Network(08-18).csv", d3.autoType).then(
+          (data) => {
+            const cityOutflows = {};
+            const cityInflows = {};
+
+            data.forEach((d) => {
+              const fromCity = d.From;
+              const toCity = d.To;
+              const outflow = +d.Times;
+
+              if (fromCity !== toCity) {
+                if (cityOutflows.hasOwnProperty(fromCity)) {
+                  cityOutflows[fromCity] += outflow;
+                } else {
+                  cityOutflows[fromCity] = outflow;
+                }
+                if (cityInflows.hasOwnProperty(toCity)) {
+                  cityInflows[toCity] += outflow;
+                } else {
+                  cityInflows[toCity] = outflow;
+                }
+              }
+            });
+            const main = Object.keys(cityOutflows).map((city) => ({
+              city: city,
+              times: cityOutflows[city],
+              times1: cityInflows[city] || 0
+            }));
+
+            main.sort((a, b) => b.times - a.times);
+            console.table(main);
+            const svg = d3.select(".svg3");
+            const width = +svg.attr("width");
+            const height = +svg.attr("height");
+            const gap = 40;
+            const cx = 500;
+            const cy = (d, i) => 100 + i * gap;
+            const lineGenerator = d3
+              .line()
+              .x((d) => d.x)
+              .y((d) => d.y);
+            //标签
+            svg
+              .selectAll(".myText2")
+              .data(main)
+              .join("text")
+              .attr("class", "text")
+              .attr("y", (d, i) => cy(d, i) - 10)
+              .attr("x", 550)
+              .attr("text-anchor", "end")
+              .attr("text-anchor", "middle")
+              .attr("writing-mode", "horizontal-tb")
+              .text((d) => d.city);
+            text = ["流出量", "城市名", "流入量"];
+            svg
+              .selectAll(".label")
+              .data(text)
+              .enter()
+              .append("text")
+              .attr("class", "label")
+              .attr("x", (d, i) => 405 + i * 120)
+              .attr("y", 50)
+              .attr("text-anchor", "start")
+              .attr("writing-mode", "horizontal-tb")
+              .text((d) => d);
+            //svg.selectAll('.myLine').data(main).join('path')
+            //  .attr('class', 'line')
+            //  .attr('d', (d, i) => lineGenerator([
+            //    { x: 500, y: cy(d, i)+gap/2 },
+            //    { x: 1000, y: cy(d, i)+gap/2 }
+            //  ]))
+            // .style('stroke', 'gray').style('stroke-width', 0.5);
+            //流出流入量
+            svg
+              .selectAll(".myText2")
+              .data(main)
+              .join("text")
+              .attr("class", "text")
+              .attr("y", (d, i) => cy(d, i) - 10)
+              .attr("x", 455)
+              .attr("text-anchor", "end")
+              .attr("writing-mode", "horizontal-tb")
+              .text((d) => d.times);
+            svg
+              .selectAll(".myText2")
+              .data(main)
+              .join("text")
+              .attr("class", "text")
+              .attr("y", (d, i) => cy(d, i) - 10)
+              .attr("x", 645)
+              .attr("text-anchor", "start")
+              .attr("writing-mode", "horizontal-tb")
+              .text((d) => d.times1);
+            //创建坐标轴
+            //坐标轴
+            const xScale = d3
+              .scaleLinear()
+              .domain([0, 1000, 10000, 50000, 150000, 1000000, 2000000])
+              .range([0, 50, 100, 150, 200, 250, 300]);
+            const xScale1 = d3
+              .scaleLinear()
+              .domain([2000000, 1000000, 150000, 50000, 10000, 1000, 0])
+              .range([0, 50, 100, 150, 200, 250, 300]);
+            const xAxis1 = d3
+              .axisTop(xScale1)
+              .tickValues([0, 1000, 10000, 50000, 150000, 1000000, 2000000]);
+            const xAxis = d3
+              .axisTop(xScale)
+              .tickValues([0, 1000, 10000, 50000, 150000, 1000000, 2000000]);
+            svg
+              .append("g")
+              .attr("class", "x-axis")
+              .attr("transform", `translate(10, 50)`)
+              .call(xAxis);
+            svg
+              .append("g")
+              .attr("class", "x-axis")
+              .attr("transform", `translate(750, 50)`)
+              .call(xAxis1);
+            const cityNames = main.map((d) => d.city);
+            const yScale = d3
+              .scaleBand()
+              .domain(cityNames)
+              .range([0, 22 * gap])
+              .padding(0.2);
+            const yAxis = d3.axisLeft(yScale).tickFormat("");
+            svg
+              .append("g")
+              .attr("class", "y-axis")
+              .attr("transform", `translate(10, 50)`)
+              .call(yAxis);
+            svg
+              .append("g")
+              .attr("class", "y-axis")
+              .attr("transform", `translate(1050, 50)`)
+              .call(yAxis);
+            svg
+              .selectAll(".rect")
+              .data(main)
+              .join("rect")
+              .attr("x", 10)
+              .attr("y", (d, i) => 80 + yScale(d.city) - yScale.bandwidth() / 2)
+              .attr("width", (d) => xScale(d.times))
+              .attr("height", 20)
+              .style("fill", (d) => {
+                if (d.times < 1000) {
+                  return "#fee0d2";
+                } else if (d.times < 10000) {
+                  return "#A1DAB4";
+                } else if (d.times < 50000) {
+                  return "#41B6C4";
+                } else if (d.times < 150000) {
+                  return "#2C7FB8";
+                } else if (d.times < 1000000) {
+                  return "#253494";
+                } else if (d.times < 2000000) {
+                  return "#E34A33";
+                } else {
+                  return "#253494";
+                }
+              });
+            svg
+              .selectAll(".rect")
+              .data(main)
+              .join("rect")
+              .attr("x", (d) => 1050 - xScale(d.times1))
+              .attr("y", (d, i) => 80 + yScale(d.city) - yScale.bandwidth() / 2)
+              .attr("width", (d) => xScale(d.times1))
+              .attr("height", 20)
+              .style("fill", (d) => {
+                if (d.times1 < 1000) {
+                  return "#fee0d2";
+                } else if (d.times1 < 10000) {
+                  return "#A1DAB4";
+                } else if (d.times1 < 50000) {
+                  return "#41B6C4";
+                } else if (d.times1 < 150000) {
+                  return "#2C7FB8";
+                } else if (d.times1 < 1000000) {
+                  return "#253494";
+                } else if (d.times1 < 2000000) {
+                  return "#E34A33";
+                } else {
+                  return "#253494";
+                }
+              });
+          }
+        );
+      </script>
+      <div class="little_head">
+        <div class="space"></div>
+        <div class="edge"></div>
+        <div class="space"></div>
+        <div class="paragraph">
+          <p class="p_bold">地区净流入图</p>
+          <p>
+            为了帮助我们进一步了解城市之间的差异、分析城市的吸引力，我们将城市的净流入量进行了可视化展示：
+          </p>
+        </div>
+      </div>
+      <svg
+        width="1100"
+        height="950"
+        id="mainsvg"
+        class="svg4"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+      <script>
+        d3.csv("../data/Author_Mobility_Network(08-18).csv", d3.autoType).then(
+          (data) => {
+            const cityOutflows = {};
+            const cityInflows = {};
+            data.forEach((d) => {
+              const fromCity = d.From;
+              const toCity = d.To;
+              const outflow = +d.Times;
+              if (fromCity !== toCity) {
+                if (cityOutflows.hasOwnProperty(fromCity)) {
+                  cityOutflows[fromCity] += outflow;
+                } else {
+                  cityOutflows[fromCity] = outflow;
+                }
+                if (cityInflows.hasOwnProperty(toCity)) {
+                  cityInflows[toCity] += outflow;
+                } else {
+                  cityInflows[toCity] = outflow;
+                }
+              }
+            });
+            const main = Object.keys(cityOutflows).map((city) => ({
+              city: city,
+              time: cityInflows[city] - cityOutflows[city]
+            }));
+            main.sort((a, b) => b.time - a.time);
+            console.log(main);
+            const svg = d3.select(".svg4");
+            const width = +svg.attr("width");
+            const height = +svg.attr("height");
+
+            const yScale1 = d3
+              .scaleLinear()
+              .domain([0, -200, -20000])
+              .range([0, 100, 300]);
+            const yAxis1 = d3.axisLeft(yScale1).tickValues([0, -200, -20000]);
+            svg
+              .append("g")
+              .attr("class", "y-axis")
+              .attr("transform", `translate(50, 550)`)
+              .call(yAxis1);
+
+            const yScale2 = d3
+              .scaleLinear()
+              .domain([0, 100, 2000, 4000, 8000])
+              .range([400, 350, 225, 150, 0]);
+            const yAxis2 = d3
+              .axisLeft(yScale2)
+              .tickValues([0, 100, 2000, 4000, 8000]);
+            svg
+              .append("g")
+              .attr("class", "y-axis")
+              .attr("transform", `translate(50, 150)`)
+              .call(yAxis2);
+
+            const xScaleName = d3
+              .scaleBand()
+              .domain(main.map((d) => d.city))
+              .range([0, 1000])
+              .padding(0.1);
+            const xAxisName = d3.axisBottom(xScaleName).tickValues("");
+            svg
+              .append("g")
+              .attr("class", "x-axis")
+              .attr("transform", `translate(50, 550)`)
+              .call(xAxisName);
+
+            const z = svg.append("g").attr("class", "positive-rects");
+            const zColorScale = d3
+              .scaleSequential()
+              .domain([0, -20000])
+              .interpolator(d3.interpolateRgb("#f71505", "#ba1106"));
+            z.selectAll("rect")
+              .data(main.filter((d) => d.time <= 0))
+              .enter()
+              .append("rect")
+              .attr("x", (d) => xScaleName(d.city) + 50)
+              .attr("y", (d) => 550)
+              .attr("width", xScaleName.bandwidth())
+              .attr("height", (d) => yScale1(d.time))
+              .style("fill", (d) => zColorScale(d.time))
+              .on("mouseover", function (event, d) {
+                const x = xScaleName(d.city) - 50 - xScaleName.bandwidth() + 20;
+                const y = 550 + yScale1(d.time) + 10;
+                const rectWidth = 100;
+                const rectHeight = 40;
+
+                // 添加矩形框
+                svg
+                  .append("rect")
+                  .attr("class", "tooltip-box")
+                  .attr("x", x)
+                  .attr("y", y - rectHeight) // 将矩形框上移一些
+                  .attr("width", rectWidth + 5)
+                  .attr("height", rectHeight)
+                  .attr("rx", 5)
+                  .attr("ry", 5)
+                  .style("fill", "white")
+                  .style("stroke", "black");
+
+                // 显示城市名
+                svg
+                  .append("text")
+                  .attr("class", "tooltip-text")
+                  .attr("x", x + 5)
+                  .attr("y", y - rectHeight + 20)
+                  .text(`City: ${d.city}`)
+                  .style("font-size", "12px");
+
+                // 显示数值
+                svg
+                  .append("text")
+                  .attr("class", "tooltip-text")
+                  .attr("x", x + 5)
+                  .attr("y", y - rectHeight + 35)
+                  .text(`Value: ${d.time}`)
+                  .style("font-size", "12px");
+              })
+              .on("mouseout", () => {
+                svg.selectAll(".tooltip-box").remove();
+                svg.selectAll(".tooltip-text").remove();
+              });
+
+            const f = svg.append("g").attr("class", "negative-rects");
+            const fColorScale = d3
+              .scaleSequential()
+              .domain([8000, 0])
+              .interpolator(d3.interpolateRgb("#2b7ce9", "#57b1f9"));
+            f.selectAll("rect")
+              .data(main.filter((d) => d.time > 0))
+              .enter()
+              .append("rect")
+              .attr("x", (d) => xScaleName(d.city) + 50)
+              .attr("y", (d) => yScale2(d.time) + 150)
+              .attr("width", xScaleName.bandwidth())
+              .attr("height", (d) => yScale2(0) - yScale2(d.time))
+              .style("fill", (d) => fColorScale(d.time))
+              .on("mouseover", function (event, d) {
+                const x = xScaleName(d.city) + 50 + xScaleName.bandwidth() + 10;
+                const y = yScale2(d.time) + 150; // 调整位置
+                const rectWidth = 110;
+                const rectHeight = 40;
+                // 添加矩形框
+                svg
+                  .append("rect")
+                  .attr("class", "tooltip-box")
+                  .attr("x", x)
+                  .attr("y", y)
+                  .attr("width", rectWidth + 5)
+                  .attr("height", rectHeight)
+                  .attr("rx", 5)
+                  .attr("ry", 5)
+                  .style("fill", "white")
+                  .style("stroke", "black");
+
+                // 显示城市名
+                svg
+                  .append("text")
+                  .attr("class", "tooltip-text")
+                  .attr("x", x + 5)
+                  .attr("y", y + 20)
+                  .text(`City: ${d.city}`)
+                  .style("font-size", "12px");
+
+                // 显示数值
+                svg
+                  .append("text")
+                  .attr("class", "tooltip-text")
+                  .attr("x", x + 5)
+                  .attr("y", y + 35)
+                  .text(`Value: ${d.time}`)
+                  .style("font-size", "12px");
+              })
+              .on("mouseout", () => {
+                svg.selectAll(".tooltip-box").remove();
+                svg.selectAll(".tooltip-text").remove();
+              });
+          }
+        );
+      </script>
+    </div>
+    <div class="end">
+      <div class="space"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="paragraph">
+        <p>
+          Thank you for reading this page.
+        </p>
+        <p>Now you can choose which page to go next:</p>
+      </div>
+      <div>
+        <button
+          class="choose_end"
+          id="page_2"
+          onclick="location='discipline.html'"
+        >
+          Mobility in Disciplinary Focus
+        </button>
+      </div>
+      <div>
+        <button
+          class="choose_end"
+          id="homepage"
+          onclick="location='../index.html'"
+        >
+          Return to Homepage
+        </button>
+      </div>
+      <div class="space"></div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Researcher's mobility in Finland</title>
+    <meta charset="UTF-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="upgrade-insecure-requests"
+    />
+    <link rel="stylesheet" type="text/css" href="../src/styles.css" />
+    <script src="http://d3js.org/d3.v6.min.js" charset="utf-8"></script>
+  </head>
+
+  <body>
+    <div class="head_2">
+      <p>Researcher's mobility in disciplinary focus</p>
+    </div>
+    <div class="head_title">
+      <div class="titles">
+        <p>1.Overall data visualization.</p>
+        <p>2.Ranking of specific disciplines.</p>
+      </div>
+    </div>
+    <div class="main">
+      <div class="space_small"></div>
+      <div class="spcae"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="titles_little">
+        <p>
+          1.Overall data visualization
+        </p>
+      </div>
+      <div class="paragraph">
+        <p>
+          下图展示了2008-2018年间芬兰学者在不同学科之间的流动情况：
+        </p>
+      </div>
+
+      <div class="force_layout">
+        <svg
+          width="1440"
+          height="1250"
+          id="body"
+          class="svg1"
+          style="display: block; margin: 0 auto;"
+        ></svg>
+        <script
+          type="text/javascript"
+          src="http://d3js.org/d3.v5.min.js"
+        ></script>
+        <script>
+          var width = 1400;
+          var height = 1250;
+          var svg = d3
+            .select("#body")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height);
+          var marge = { top: 0, bottom: 0, left: 0, right: 0 };
+          var g = svg
+            .append("g")
+            .attr(
+              "transform",
+              "translate(" + marge.left + "," + marge.top + ")"
+            );
+
+          d3.csv("../data/Discipline_Mobility_Network.csv", d3.autoType).then(
+            (data) => {
+              const uniqueSubjects = new Set();
+              data.forEach((entry) => {
+                const [from, to] = entry["From-To"].split("-");
+                uniqueSubjects.add(from.trim());
+                uniqueSubjects.add(to.trim());
+              });
+
+              const nodes = Array.from(uniqueSubjects).map((subject) => ({
+                name: subject
+              }));
+              const edges = [];
+              data.forEach((entry) => {
+                const [from, to] = entry["From-To"].split("-");
+                const weigh = entry["Times"];
+
+                if (from.trim() !== to.trim()) {
+                  edges.push({
+                    source: nodes.find((node) => node.name === from.trim()), // 注意这里是节点对象，而不是字符串
+                    target: nodes.find((node) => node.name === to.trim()), // 注意这里是节点对象，而不是字符串
+                    value: +weigh
+                  });
+                }
+              });
+
+              console.log(nodes);
+              console.log(edges);
+              //设置一个color的颜色比例尺
+              var colorScale = d3
+                .scaleOrdinal()
+                .domain(d3.range(nodes.length))
+                .range(d3.schemeCategory10);
+              var forceSimulation = d3
+                .forceSimulation()
+                .force("link", d3.forceLink().distance(100))
+                .force("charge", d3.forceManyBody())
+                .force("center", d3.forceCenter());
+              //生成节点数据
+              forceSimulation.nodes(nodes);
+              forceSimulation.on("tick", ticked);
+
+              //生成边数据
+              forceSimulation
+                .force("link")
+                .links(edges)
+                .distance(function (d) {
+                  //可以调整每一边的长度
+                  return 500 / d.value;
+                });
+              //设置图形的中心位置
+              forceSimulation
+                .force("center")
+                .x(width / 2)
+                .y(height / 2);
+              //在浏览器的控制台输出
+              console.log(nodes);
+              console.log(edges);
+
+              var links = g
+                .append("g")
+                .selectAll("line")
+                .data(edges)
+                .enter()
+                .append("line")
+                .attr("stroke", (d) => {
+                  if (d.value < 10) {
+                    return "#eeeaea";
+                  } else if (d.value < 50) {
+                    return "#ccc7c7";
+                  } else if (d.value < 100) {
+                    return "#9a9797";
+                  } else if (d.value < 200) {
+                    return "#847676";
+                  } else if (d.value < 900) {
+                    return "#a26969";
+                  } else if (d.value < 9000) {
+                    return "#d69d47";
+                  } else if (d.value < 100000) {
+                    return "#de355a";
+                  } else {
+                    return "#fb0505";
+                  }
+                })
+                .attr("stroke-width", (d) => {
+                  if (d.value < 10) {
+                    return 0.2;
+                  } else if (d.value < 50) {
+                    return 0.4;
+                  } else if (d.value < 200) {
+                    return 1;
+                  } else if (d.value < 900) {
+                    return 3;
+                  } else if (d.value < 9000) {
+                    return 6;
+                  } else if (d.value < 10000) {
+                    return 7.5;
+                  } else {
+                    return 10;
+                  }
+                }); // 设置边的宽度
+
+              //建立用来放在每个节点和对应文字的分组<g>
+              var gs = g
+                .selectAll(".circleText")
+                .data(nodes)
+                .enter()
+                .append("g")
+                .attr("transform", function (d, i) {
+                  var cirX = d.x;
+                  var cirY = d.y;
+                  return "translate(" + cirX + "," + cirY + ")";
+                })
+                .call(
+                  d3
+                    .drag()
+                    .on("start", started)
+                    .on("drag", dragged)
+                    .on("end", ended)
+                );
+
+              //绘制节点
+              gs.append("circle")
+                .attr("r", 5)
+
+                .attr("fill", function (d, i) {
+                  return colorScale(i);
+                });
+
+              var linksText = g
+                .append("g")
+                .selectAll("text")
+                .data(edges)
+                .enter()
+                .append("text")
+                .text(function (d) {
+                  return d.relation;
+                });
+              gs.append("text")
+                .attr("x", -10)
+                .attr("y", -20)
+                .attr("dy", 10)
+                .style("font-size", "8px")
+                .text(function (d) {
+                  return d.name;
+                });
+              function ticked() {
+                links
+                  .attr("x1", function (d) {
+                    return d.source.x;
+                  })
+                  .attr("y1", function (d) {
+                    return d.source.y;
+                  })
+                  .attr("x2", function (d) {
+                    return d.target.x;
+                  })
+                  .attr("y2", function (d) {
+                    return d.target.y;
+                  });
+
+                linksText
+                  .attr("x", function (d) {
+                    return (d.source.x + d.target.x) / 2;
+                  })
+                  .attr("y", function (d) {
+                    return (d.source.y + d.target.y) / 2;
+                  });
+
+                gs.attr("transform", function (d) {
+                  return "translate(" + d.x + "," + d.y + ")";
+                });
+              }
+
+              //drag
+              function started(d) {
+                if (!d3.event.active) {
+                  forceSimulation.alphaTarget(0.8).restart(); //设置衰减系数，对节点位置移动过程的模拟，数值越高移动越快，数值范围[0，1]
+                }
+                d.fx = d.x;
+                d.fy = d.y;
+              }
+              function dragged(d) {
+                d.fx = d3.event.x;
+                d.fy = d3.event.y;
+              }
+              function ended(d) {
+                if (!d3.event.active) {
+                  forceSimulation.alphaTarget(0);
+                }
+                d.fx = null;
+                d.fy = null;
+              }
+            }
+          );
+        </script>
+        <div class="paragraph">
+          <p>
+            （图中每一个节点代表一个研究焦点，连接线条的粗细代表流动量的大小：连线越粗则代表流动数量越大）
+          </p>
+        </div>
+      </div>
+      <div class="main">
+        <div class="space"></div>
+        <div class="edge"></div>
+        <div class="space"></div>
+        <div class="titles_little">
+          <p>
+            2.Ranking of specific disciplines
+          </p>
+        </div>
+        <div class="paragraph">
+          <p class="p_bold">
+            流入量Top25的学科：
+          </p>
+        </div>
+        <svg
+          width="1100"
+          height="1200"
+          id="svg_2"
+          class="svg2"
+          style="display: block; margin: 0 auto;"
+        ></svg>
+        <script>
+          d3.csv("../data/Discipline_Mobility_Network.csv", d3.autoType).then(
+            (data) => {
+              data.forEach((entry) => {
+                const [from, to] = entry["From-To"].split("-");
+                entry.From = from.trim();
+                entry.To = to.trim();
+              });
+              const into = d3.rollup(
+                data,
+                (v) => d3.sum(v, (d) => d.Times),
+                (d) => d.To
+              );
+              const intodata = Array.from(into, ([to, count]) => ({
+                to,
+                count
+              }));
+              const top25 = intodata
+                .sort((a, b) => b.count - a.count)
+                .slice(0, 25);
+
+              console.log(top25);
+
+              const svg = d3.select(".svg2");
+              const width = +svg.attr("width");
+              const height = +svg.attr("height");
+              const xScale = d3
+                .scaleLinear()
+                .domain([0, 30000, 100000, 1000000, 4000000])
+                .range([0, 150, 300, 450, 600]);
+              const xAxis = d3
+                .axisBottom(xScale)
+                .tickValues([0, 30000, 100000, 1000000, 4000000]);
+              svg
+                .append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(250,1100)`)
+                .call(xAxis);
+              const yScale = d3
+                .scaleBand()
+                .domain(top25.map((d) => d.to))
+                .range([0, 1000])
+                .padding(0.1);
+              const yAxis = d3.axisLeft(yScale);
+              svg
+                .append("g")
+                .attr("class", "y-axis")
+                .attr("transform", `translate(250,100)`)
+                .call(yAxis);
+              svg
+                .append("text")
+                .attr("x", 430)
+                .attr("y", 50)
+                .attr("dy", "0.35em")
+                .style("font-size", "18px")
+                .style("text-anchor", "middle")
+                .text("Top 25 Disciplines with Inflows from 2008-2018");
+              svg
+                .selectAll("rect")
+                .data(top25)
+                .enter()
+                .append("rect")
+                .attr("x", 250)
+                .attr("y", (d) => yScale(d.to) + 100)
+                .attr("width", (d) => xScale(d.count))
+                .attr("height", 27)
+                .style("fill", (d) => {
+                  if (d.count < 30000) {
+                    return "#A1DAB4"; // 浅绿色
+                  } else if (d.count < 100000) {
+                    return "#41B6C4"; // 浅蓝色
+                  } else if (d.count < 1000000) {
+                    return "#2C7FB8"; // 深蓝色
+                  } else {
+                    return "#253494"; // 更深的蓝色
+                  }
+                });
+
+              svg
+                .selectAll(".label")
+                .data(top25)
+                .join("text")
+                .attr("class", "label")
+                .attr("x", (d) => 250 + xScale(d.count) + 5)
+                .attr("y", (d) => yScale(d.to) + 100 + 10)
+                .attr("dy", "0.35em")
+                .style("font-size", "12px")
+                .text((d) => d.count);
+            }
+          );
+        </script>
+      </div>
+    </div>
+    <div class="main">
+      <div class="space"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="paragraph">
+        <p class="p_bold">
+          流出量Top25的学科：
+        </p>
+      </div>
+      <svg
+        width="1100"
+        height="1200"
+        id="svg_3"
+        class="svg3"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+      <script>
+        d3.csv("../data/Discipline_Mobility_Network.csv", d3.autoType).then(
+          (data) => {
+            data.forEach((entry) => {
+              const [from, to] = entry["From-To"].split("-");
+              entry.From = from.trim();
+              entry.To = to.trim();
+            });
+            const into = d3.rollup(
+              data,
+              (v) => d3.sum(v, (d) => d.Times),
+              (d) => d.From
+            );
+            const intodata = Array.from(into, ([to, count]) => ({ to, count }));
+            const top25 = intodata
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 25);
+
+            console.log(top25);
+
+            const svg = d3.select(".svg3");
+            const width = +svg.attr("width");
+            const height = +svg.attr("height");
+            const xScale = d3
+              .scaleLinear()
+              .domain([0, 30000, 100000, 1000000, 4000000])
+              .range([0, 150, 300, 450, 600]);
+            const xAxis = d3
+              .axisBottom(xScale)
+              .tickValues([0, 30000, 100000, 1000000, 4000000]);
+            svg
+              .append("g")
+              .attr("class", "x-axis")
+              .attr("transform", `translate(250,1100)`)
+              .call(xAxis);
+            const yScale = d3
+              .scaleBand()
+              .domain(top25.map((d) => d.to))
+              .range([0, 1000])
+              .padding(0.1);
+            const yAxis = d3.axisLeft(yScale);
+            svg
+              .append("g")
+              .attr("class", "y-axis")
+              .attr("transform", `translate(250,100)`)
+              .call(yAxis);
+            svg
+              .append("text")
+              .attr("x", 430)
+              .attr("y", 50)
+              .attr("dy", "0.35em")
+              .style("font-size", "18px")
+              .style("text-anchor", "middle")
+              .text("Top 25 Disciplines with outflows from 2008-2018");
+            svg
+              .selectAll("rect")
+              .data(top25)
+              .enter()
+              .append("rect")
+              .attr("x", 250)
+              .attr("y", (d) => yScale(d.to) + 100)
+              .attr("width", (d) => xScale(d.count))
+              .attr("height", 27)
+              .style("fill", (d) => {
+                if (d.count < 30000) {
+                  return "#A1DAB4"; // 浅绿色
+                } else if (d.count < 100000) {
+                  return "#41B6C4"; // 浅蓝色
+                } else if (d.count < 1000000) {
+                  return "#2C7FB8"; // 深蓝色
+                } else {
+                  return "#253494"; // 更深的蓝色
+                }
+              });
+
+            svg
+              .selectAll(".label")
+              .data(top25)
+              .join("text")
+              .attr("class", "label")
+              .attr("x", (d) => 250 + xScale(d.count) + 5)
+              .attr("y", (d) => yScale(d.to) + 100 + 10)
+              .attr("dy", "0.35em")
+              .style("font-size", "12px")
+              .text((d) => d.count);
+          }
+        );
+      </script>
+    </div>
+    <div class="s_area">
+      <div class="space"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="paragraph">
+        <p class="p_bold">学科净流入图</p>
+        <p>
+          在对流入流出分别进行排名后，我们想要了解学科净流入量的排名，提供了全部、前15名和后10名三个选项进行可视化展示：
+        </p>
+      </div>
+      <select id="visualizationSelect" class="visualizationSelect">
+        <option value="all">显示全部</option>
+        <option value="top15">显示前15名</option>
+        <option value="bottom10">显示后10名</option>
+      </select>
+      <svg
+        width="1100"
+        height="700"
+        id="mainsvg"
+        class="svgs"
+        style="display: block; margin: 0 auto;"
+      ></svg>
+
+      <script>
+        d3.csv("../data/Discipline_Mobility_Network.csv", d3.autoType).then(
+          (data) => {
+            const uniqueSubjects = new Set();
+            data.forEach((entry) => {
+              const [from, to] = entry["From-To"].split("-");
+              entry.From = from.trim();
+              entry.To = to.trim();
+              uniqueSubjects.add(from.trim());
+              uniqueSubjects.add(to.trim());
+            });
+
+            const nodes = Array.from(uniqueSubjects).map((subject) => ({
+              name: subject
+            }));
+            const edges = [];
+            const stop = [];
+
+            const inflow = d3.rollup(
+              data,
+              (v) => d3.sum(v, (d) => d.Times),
+              (d) => d.To
+            );
+
+            const outflow = d3.rollup(
+              data,
+              (v) => d3.sum(v, (d) => d.Times),
+              (d) => d.From
+            );
+
+            data.forEach((entry) => {
+              const [from, to] = entry["From-To"].split("-");
+              const weigh = entry["Times"];
+              if (from.trim() !== to.trim()) {
+                edges.push({
+                  source: nodes.find((node) => node.name === from.trim()),
+                  target: nodes.find((node) => node.name === to.trim()),
+                  value: +weigh
+                });
+              } else {
+                const outValue = outflow.get(from.trim()) || 0;
+                const inValue = inflow.get(to.trim()) || 0;
+                stop.push({
+                  name: from.trim(),
+                  value: inValue - outValue
+                });
+              }
+            });
+            stop.sort((a, b) => b.value - a.value);
+            const top15 = stop.slice(0, 15);
+            console.log(stop);
+            console.log(top15);
+            const bottom10 = stop.slice(-10);
+            console.log(bottom10);
+
+            function all(svgSelector, data) {
+              const svg = d3.select(svgSelector);
+              const width = +svg.attr("width");
+              const height = +svg.attr("height");
+              const yScale1 = d3.scaleLinear().domain([0, 50]).range([100, 0]);
+              const yAxis1 = d3.axisLeft(yScale1).tickValues([0, 50]);
+              svg
+                .append("g")
+                .attr("class", "y-axis")
+                .attr("transform", `translate(50, 50)`)
+                .call(yAxis1);
+              const yScale2 = d3
+                .scaleLinear()
+                .domain([-6000, -1000, -500, -100, 0])
+                .range([400, 300, 200, 100, 0]);
+              const yAxis2 = d3
+                .axisLeft(yScale2)
+                .tickValues([-6000, -1000, -500, -100, 0]);
+              svg
+                .append("g")
+                .attr("class", "y-axis")
+                .attr("transform", `translate(50, 150)`)
+                .call(yAxis2);
+              const xScaleName = d3
+                .scaleBand()
+                .domain(data.map((d) => d.name))
+                .range([0, 1000])
+                .padding(0.1);
+              const xAxisName = d3.axisBottom(xScaleName).tickValues("");
+              svg
+                .append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(50, 150)`)
+                .call(xAxisName);
+              const z = svg.append("g").attr("class", "positive-rects");
+              const f = svg.append("g").attr("class", "negative-rects");
+              const zColorScale = d3
+                .scaleSequential()
+                .domain([0, 50])
+                .interpolator(d3.interpolateRgb("#f71505", "#ba1106"));
+              z.selectAll("rect")
+                .data(data.filter((d) => d.value >= 0))
+                .enter()
+                .append("rect")
+                .attr("x", (d) => xScaleName(d.name) + 50)
+                .attr("y", (d) => yScale1(d.value) + 50)
+                .attr("width", xScaleName.bandwidth())
+                .attr("height", (d) => 100 - yScale1(d.value))
+                .style("fill", (d) => zColorScale(d.value));
+              const fColorScale = d3
+                .scaleSequential()
+                .domain([-6000, -1000, -500, -100, 0])
+                .interpolator(d3.interpolateRgb("#2b7ce9", "#57b1f9"));
+              f.selectAll("rect")
+                .data(data.filter((d) => d.value < 0))
+                .enter()
+                .append("rect")
+                .attr("x", (d) => xScaleName(d.name) + 50)
+                .attr("y", 150)
+                .attr("width", xScaleName.bandwidth())
+                .attr("height", (d) => yScale2(d.value) - yScale2(0)) // 负值矩形的高度
+                .style("fill", (d) => fColorScale(d.value));
+            }
+
+            function top(svgSelector, data) {
+              const svg = d3.select(svgSelector);
+              const width = +svg.attr("width");
+              const height = +svg.attr("height");
+              const xScale1 = d3
+                .scaleLinear()
+                .domain([0, 10, 20, 30, 40, 50])
+                .range([0, 80, 160, 240, 320, 400]);
+              const xAxis1 = d3
+                .axisTop(xScale1)
+                .tickValues([0, 10, 20, 30, 40, 50]);
+              svg
+                .append("g")
+                .attr("class", "y-axis")
+                .attr("transform", `translate(200, 100)`)
+                .call(xAxis1);
+              const yScaleName = d3
+                .scaleBand()
+                .domain(data.map((d) => d.name))
+                .range([0, 500])
+                .padding(0.1);
+              const yAxisName = d3.axisLeft(yScaleName);
+              svg
+                .append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(200, 100)`)
+                .call(yAxisName);
+              const z = svg.append("g").attr("class", "positive-rects");
+              const f = svg.append("g").attr("class", "negative-rects");
+              const zColorScale = d3
+                .scaleSequential()
+                .domain([0, 50])
+                .interpolator(d3.interpolateRgb("#f0e6e6", "#fa0707"));
+              svg
+                .selectAll("rect")
+                .data(top15)
+                .enter()
+                .append("rect")
+                .attr("x", 200)
+                .attr("y", (d) => yScaleName(d.name) + 100)
+                .attr("width", (d) => xScale1(d.value))
+                .attr("height", 27)
+                .style("fill", (d) => zColorScale(d.value))
+                .on("mouseover", function (event, d) {
+                  d3.select(this).style("fill", "#49c2f2");
+                  svg
+                    .append("text")
+                    .attr("class", "tooltip")
+                    .attr("x", 210)
+                    .attr("y", yScaleName(d.name) + 120)
+                    .text(d.value)
+                    .attr("fill", "white");
+                })
+                .on("mouseout", function (event, d) {
+                  d3.select(this).style("fill", (d) => zColorScale(d.value));
+                  svg.select(".tooltip").remove();
+                });
+              svg
+                .selectAll(".text")
+                .data(["学科净流出前15名"])
+                .join("text")
+                .attr("x", 500)
+                .attr("y", 60)
+                .text((d) => d)
+                .style("font-size", "16px")
+                .style("font-weight", "bold");
+            }
+
+            function Bottom(svgSelector, data) {
+              const svg = d3.select(svgSelector);
+              const width = +svg.attr("width");
+              const height = +svg.attr("height");
+              const xScale1 = d3
+                .scaleLinear()
+                .domain([0, -2000, -4000, -6000])
+                .range([0, 80, 160, 240]);
+              const xAxis1 = d3
+                .axisTop(xScale1)
+                .tickValues([0, -2000, -4000, -6000]);
+              svg
+                .append("g")
+                .attr("class", "y-axis")
+                .attr("transform", `translate(200, 100)`)
+                .call(xAxis1);
+              const yScaleName = d3
+                .scaleBand()
+                .domain(data.map((d) => d.name))
+                .range([0, 500])
+                .padding(0.1);
+              const yAxisName = d3.axisLeft(yScaleName);
+              svg
+                .append("g")
+                .attr("class", "x-axis")
+                .attr("transform", `translate(200, 100)`)
+                .call(yAxisName);
+              const z = svg.append("g").attr("class", "positive-rects");
+              const f = svg.append("g").attr("class", "negative-rects");
+              const zColorScale = d3
+                .scaleSequential()
+                .domain([0, 6000])
+                .interpolator(d3.interpolateRgb("#f0e6e6", "#fa0707"));
+
+              svg
+                .selectAll("rect")
+                .data(bottom10)
+                .enter()
+                .append("rect")
+                .attr("x", 200)
+                .attr("y", (d) => yScaleName(d.name) + 110)
+                .attr("width", (d) => xScale1(d.value))
+                .attr("height", 27)
+                .style("fill", (d) => zColorScale(-d.value))
+                .on("mouseover", function (event, d) {
+                  d3.select(this).style("fill", "#49c2f2");
+                  svg
+                    .append("text")
+                    .attr("class", "tooltip")
+                    .attr("x", 205)
+                    .attr("y", yScaleName(d.name) + 130)
+                    .text(d.value)
+                    .attr("fill", "white");
+                })
+
+                .on("mouseout", function (d, event) {
+                  d3.select(this).style("fill", (d) => zColorScale(-d.value));
+                  svg.select(".tooltip").remove();
+                });
+              svg
+                .selectAll(".text")
+                .data(["学科净流出后10名"])
+                .join("text")
+                .attr("x", 500)
+                .attr("y", 60)
+                .text((d) => d)
+                .style("font-size", "16px")
+                .style("font-weight", "bold");
+            }
+
+            const visualizationSelect = document.getElementById(
+              "visualizationSelect"
+            );
+
+            visualizationSelect.addEventListener("change", function () {
+              const selectedValue = visualizationSelect.value;
+              d3.select("#mainsvg").selectAll("*").remove();
+              setTimeout(() => {
+                if (selectedValue === "all") {
+                  all("#mainsvg", stop);
+                } else if (selectedValue === "top15") {
+                  top("#mainsvg", top15);
+                } else if (selectedValue === "bottom10") {
+                  Bottom("#mainsvg", bottom10);
+                }
+              }, 100);
+            });
+          }
+        );
+      </script>
+    </div>
+    <div class="end">
+      <div class="space"></div>
+      <div class="edge"></div>
+      <div class="space"></div>
+      <div class="paragraph">
+        <p>
+          Thank you for reading this page.
+        </p>
+        <p>Now you can choose which page to go next:</p>
+      </div>
+      <div>
+        <button
+          class="choose_end"
+          id="page_1"
+          onclick="location='location.html'"
+        >
+          Mobility in Location
+        </button>
+      </div>
+      <div>
+        <button
+          class="choose_end"
+          id="homepage"
+          onclick="location='../index.html'"
+        >
+          Return to Homepage
+        </button>
+      </div>
+      <div class="space"></div>
+    </div>
+  </body>
+</html>
